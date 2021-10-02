@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="./lib/jquery.js"></script>
+</head>
+
+<body>
+
+    <input type="file" id="file1" />
+    <button id="btnUpload">上传文件</button>
+
+    <br />
+    <img src="./images/loading.gif" alt="" style="display: none;" id="loading" />
+
+    <script>
+        $(function() {
+            // 监听到Ajax请求被发起了，就显示该方法只能加到document上
+            $(document).ajaxStart(function() {
+                $('#loading').show()
+            })
+
+            // 监听到 Ajax 完成的事件，就隐藏
+            $(document).ajaxStop(function() {
+                $('#loading').hide()
+            })
+
+            // 绑定点击事件
+            $('#btnUpload').on('click', function() {
+                // [0]jq转为原生的DOM   files文件列表
+                var files = $('#file1')[0].files
+                if (files.length <= 0) {
+                    return alert('请选择文件后再上传！')
+                }
+
+                // 选择了文件
+                var fd = new FormData()
+                    // 追加文件
+                fd.append('avatar', files[0])
+
+                // 发起 jQuery 的 Ajax 请求，上传文件
+                $.ajax({
+                    method: 'POST',
+                    url: 'http://www.liulongbin.top:3006/api/upload/avatar',
+                    data: fd,
+                    // jq中一定要设置为FALSE
+                    processData: false, //不修改其属性，使用FormData默认值
+                    contentType: false, //不对FormData中的数据编码
+                    // 回调拿到响应数据
+                    success: function(res) {
+                        console.log(res)
+                    }
+                })
+            })
+        })
+    </script>
+
+</body>
+
+</html>
